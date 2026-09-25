@@ -1,0 +1,137 @@
+#+startup: beamer
+#+STARTUP: showeverything
+#
+#+OPTIONS: TeX:t LaTeX:t toc:nil skip:nil d:nil todo:t pri:nil tags:not-in-toc title:nil date:nil author:nil
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0
+# +COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+
+# ____________________________________________________________________
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [aspectratio=1609,xcolor=dvipsnames,8pt]
+#+LATEX_HEADER: \setbeamertemplate{navigation symbols}{}
+#  .................   text
+#+LATEX_HEADER: \setbeamersize{text margin left=11.5mm,text margin right=20mm}
+# ---- use H 3 to cover the difficulty of BACKGROUNDS ***********
+#+OPTIONS: H:3
+
+# __________________________________ packages ___________________
+#+LATEX_HEADER: \usepackage{hyphenat} % \nohyphens for no hyphens
+#+LATEX_HEADER: \usepackage{tikz} % exact placement
+#+LATEX_HEADER: \usepackage{enumitem}  % shift stuff
+#+LATEX_HEADER: \usepackage{setspace}  % set strech lines and titles too
+#+LATEX_HEADER: \usepackage{xcolor}   % immediately define colors here
+#+LATEX_HEADER: \definecolor{myblu}{RGB}{30,57,105} %{29,50,88}
+#+LATEX_HEADER: \definecolor{myora}{RGB}{252,130,0}
+
+# ________________ redefine beamer interpretation of // and ** _____________
+#+LATEX_HEADER: \renewcommand{\emph}[1]{\textcolor{myora}{\textit{#1}}}
+#+LATEX_HEADER: \renewcommand{\alert}[1]{{\bfseries #1}}
+
+# ________________________________________________________________ FONT __ ***
+# fonts ... I got Sora from https://fonts.google.com/specimen/Sora
+# ......... mv static/  ~/.local/share/fonts
+# ......... fc-cache -f -v  ... and it works
+#+LATEX_HEADER: \usepackage{fontspec}  % XeLaTeX / LuaLaTeX only (but pdflatexok)
+#+LATEX_HEADER: \setsansfont{Sora}
+#+LATEX_HEADER: \usefonttheme{professionalfonts} % optional: prevent beamer font substitutions
+# -------------------------------------------- not useful -------- ???
+#+LATEX_HEADER:\setsansfont{Sora}[
+#+LATEX_HEADER:  UprightFont = *-Regular,
+#+LATEX_HEADER:  BoldFont    = *-Bold
+#+LATEX_HEADER:]
+
+
+# ___________________________________________________ BASIC COLORS _____ ***
+#+BEAMER_HEADER: \usefonttheme{structurebold} % NEEDED FOR BOLD TITLE
+#+BEAMER_HEADER: \setbeamercolor{frametitle}{fg=myblu}
+#+BEAMER_HEADER: \setbeamercolor{normal text}{fg=myblu}
+#  +BEAMER_HEADER: \setbeamercolor{footline}{fg=red}
+
+# _____________________________________________________ FONTS _______ ???
+# +BEAMER_HEADER: \setbeamerfont{frametitle}{shape=bold}
+# +BEAMER_HEADER: \setbeamerfont{frametitle}{size=29}
+# +BEAMER_HEADER: \setbeamerfont{normal text}{size=16pt}
+# +BEAMER_HEADER: \usefonttheme{professionalfonts}
+# +BEAMER_HEADER: \setbeamerfont{midfoot}{size=\tiny,series=\mdseries,shape=\upshape}
+
+
+# ___________________________ this is for FinTuning Positions ___ +++
+# +BEAMER_HEADER: \setbeamercolor{leftfoot}{fg=white,bg=gray}
+# +BEAMER_HEADER: \setbeamercolor{midfoot}{fg=white,bg=myora}
+# +BEAMER_HEADER: \setbeamercolor{rightfoot}{fg=white,bg=blue}
+
+# _______________________________FOOTLINE_______________________________________ ***
+# --- dp box bellow baseline; ht is box above; ----------  FRAME NUMBER+LOGO
+#      dp 7.4
+#+BEAMER_HEADER: \setbeamertemplate{footline}{%
+#+BEAMER_HEADER:   \leavevmode%
+#+BEAMER_HEADER: \raisebox{2.40ex}{%
+#+BEAMER_HEADER: \begin{beamercolorbox}[wd=0.073\paperwidth,ht=4.3ex,dp=5.0ex,left]{leftfoot}%
+#+BEAMER_HEADER:     {\hspace*{4mm}\color{myora}\Large\insertframenumber{}}
+#+BEAMER_HEADER:   \end{beamercolorbox}%
+#+BEAMER_HEADER:   }%
+#+BEAMER_HEADER: \raisebox{1.90ex}{%
+#+BEAMER_HEADER:   \begin{beamercolorbox}[wd=0.5\paperwidth,ht=4.3ex,dp=5.0ex,left]{midfoot}%
+#+BEAMER_HEADER:     {\mdseries\upshape\fontsize{4}{5}\selectfont\hspace*{0mm}\color{myblu} AI activity $\quad\bullet\quad$  Presented by: J M  $\quad\bullet\quad$ February 2026}
+#+BEAMER_HEADER:   \end{beamercolorbox}%
+#+BEAMER_HEADER:   }%
+#+BEAMER_HEADER:   % right half
+#+BEAMER_HEADER:  \hfill \begin{beamercolorbox}[wd=0.11\paperwidth,ht=4.3ex,dp=5.0ex,right]{rightfoot}%
+#+BEAMER_HEADER:     \makebox[13mm][l]{\includegraphics[width=7mm]{logosmall.png}}
+#+BEAMER_HEADER:   \end{beamercolorbox}%
+#+BEAMER_HEADER: }
+
+
+# _________________ TITLE _70mmWIDE___5mm_TopMargin_________2mm_bellow__________ ***
+#+LATEX_HEADER: \setbeamertemplate{frametitle}{\setstretch{1}\vskip4mm\vbox{}\fontsize{21}{26}\selectfont\begin{minipage}{70mm}\raggedright\nohyphens{\insertframetitle}\end{minipage}\par\vspace{3mm}}
+
+# ___________________________________ columns ___________________ ***
+#+LATEX: \setlength{\columnsep}{8mm}   % inter-column gap
+
+# ___________________________________ itemize ________________ ***
+#+LATEX_HEADER: \setbeamertemplate{itemize item}{\color{myora}\raisebox{0.35ex}{\tikz\fill (0,0) rectangle (0.7ex,0.7ex);}}
+#+LATEX_HEADER: \setbeamertemplate{itemize subitem}{\color{myora}\raisebox{0.35ex}{\tikz[yshift=1.5ex]\fill (0,0) circle (0.25ex);}}
+#+LATEX_HEADER: \setbeamertemplate{itemize subsubitem}{\color{myora}\tikz\fill (0,0) circle (0.20ex);}
+#  _________________ this default corresponds to PPTX ______________
+
+
+# _____________________ itemsep and bullets for each item level ________________________
+#+LATEX_HEADER: \setlist[itemize,1]{label=\usebeamertemplate{itemize item}, itemsep=4pt, topsep=6pt, leftmargin=1.2em, labelsep=0.5em}
+
+#+LATEX_HEADER: \setlist[itemize,2]{label=\usebeamertemplate{itemize subitem}, itemsep=3pt, leftmargin=1.6em, labelsep=0.5em}
+
+#+LATEX_HEADER: \setlist[itemize,3]{label=\usebeamertemplate{itemize subsubitem}, itemsep=2pt, leftmargin=2.0em, labelsep=0.5em}
+
+# _________________________________ linespacing _________________  ***
+#+LATEX_HEADER: \AtBeginEnvironment{itemize}{\setstretch{1.1}}  %%?? 1.2makes nicer longlines
+#+LATEX_HEADER: \AtBeginDocument{\setstretch{0.75}}
+# +LATEX_HEADER: \AtBeginDocument{\setstretch{1.0}}  %% ???
+#+LATEX_HEADER: \AtBeginDocument{\setlength{\parskip}{2.5mm}}
+
+# ____________________________________________________ inline small-image ______
+#+LATEX_HEADER:\newcommand*{\img}[1]{%
+#+LATEX_HEADER:    \raisebox{-.3\baselineskip}{%
+#+LATEX_HEADER:        \includegraphics[
+#+LATEX_HEADER:        height=\baselineskip,
+#+LATEX_HEADER:        width=\baselineskip,
+#+LATEX_HEADER:         keepaspectratio,
+#+LATEX_HEADER:        ]{#1}%
+#+LATEX_HEADER:    }%
+#+LATEX_HEADER:}
+
+# --positioning https://tex.stackexchange.com/questions/430150/placing-images-in-a-frame-beamer
+#+LATEX_HEADER:\usepackage[absolute,overlay]{textpos} %absolute positioning of text and graphic
+#+LATEX_HEADER:\TPGrid[20mm,20mm]{20}{10}
+#+LATEX_HEADER:\textblockorigin{3mm}{3mm}
+#   +LATEX_HEADER:\usepackage{microtype} % provides \textls
+
+
+
+* Frames start from here
+# ================================ END OF THE INITIAL PART ===============
+
+** Single frame here
+*** Visible Frame Title here
+
+
+# ================================ START OF THE CLOSING PART =============

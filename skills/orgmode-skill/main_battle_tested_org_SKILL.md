@@ -11,7 +11,7 @@ This is the **general org-document** branch of the org-mode skill (not presentat
 Practical rules established while writing `.org` with an option for LaTeX/PDF export.
 User preferences here override generic org defaults.
 
-Later this branch may split further (booklet, tables, programming languages).
+Tables sub-branch: `SKILL_org_doc_tables.md` (`org_doc_tables.org`, `org_doc_longtable.org`). Literate/coding: `SKILL_org_doc_literate.md` (`template_literate.org`). Later split (not written): booklet.
 
 ## 1. Isotope superscripts (indices)
 
@@ -29,13 +29,19 @@ Later this branch may split further (booklet, tables, programming languages).
 - `$\approx$` is NOT wanted — use the bare org entity `\approx{}`
   (see next section).
 - No `$^{...}$` isotope math anywhere (verified with grep for `$^{`).
+- Greek micro in units is **not** math: never `25 $\mu$m`.
 
-## 3. `\approx` (and entities in general)
+## 3. Entities: `\approx`, `\nbsp{}`, `\mu{}`
 
 - Write `\approx{}` — no surrounding `$`.
 - The `{}` terminates the entity name so a following digit parses correctly:
   `(\approx{}16.8 half-lives)`, not `(\approx16.8 ...)`.
 - Same rule generalizes: any `\entity` directly before a letter/digit gets `{}`.
+- **Non-breaking space:** LaTeX `~` is org verbatim (`~code~`). Use `\nbsp{}` instead:
+  `At 40\nbsp{}MeV`.
+- **Micrometre / mu + unit:** `25\nbsp{}\mu{}m` — glued, no `$`, no extra space.
+  Wrong: `25 $\mu$m`. Wrong: `26 \mu m` (space splits mu from m).
+- Prose example: `At 40\nbsp{}MeV on thickness 25\nbsp{}\mu{}m we sent \null^{40}Ca ions`.
 
 ## 4. Page margin (top)
 
@@ -44,7 +50,7 @@ Later this branch may split further (booklet, tables, programming languages).
 - Placed right after `#+LATEX_CLASS_OPTIONS`, before other packages.
 - Tighten further with `top=1.5cm` if asked; adjust other sides only on request.
 
-## 5. Table alignment
+## 5. Table alignment (simple cookies)
 
 - Right-align a column for **export** with an alignment-cookie row directly
   under the header hline, e.g. for column 1:
@@ -53,6 +59,8 @@ Later this branch may split further (booklet, tables, programming languages).
 - Buffer display: run `C-c C-c` (`org-table-align`) on the table to
   re-justify cells in the source after edits.
 - Only the isotope column is `<r>` here; numeric columns were left at defaults.
+- PDF **decimal-point** alignment, longtable, sidewaystable, named/`remote()` tables:
+  use the tables sub-branch (`SKILL_org_doc_tables.md`), not only `<r>`.
 
 ## 6. Current header (reference, 2026-09-10)
 
@@ -66,10 +74,24 @@ Later this branch may split further (booklet, tables, programming languages).
 #+LATEX_HEADER: \sisetup{separate-uncertainty=true, per-mode=symbol}
 ```
 
+Other header knobs (use when the file needs them; do not silently replace the block above):
+
+- `#+OPTIONS: num:nil` — no section numbers (default here is `num:t`).
+- `#+OPTIONS: tex:dvipng` — HTML / preview: render TeX snippets as PNG. Not required for PDF.
+- `#+LATEX_CLASS_OPTIONS: [a4paper,12pt]` — 12pt when asked; keep 11pt unless the file already uses 12.
+- `\usepackage{parskip}` — skip between paragraphs instead of indent (notes / table-heavy docs).
+- `dcolumn` + `\newcolumntype{d}[1]{D{.}{.}{#1}}` — `d{7,3}` / `d{5,3}` columns; see tables sub-branch.
+- Leave commented unless asked: `# #+LATEX_HEADER: \usepackage{utf8}` (needless with LuaLaTeX/XeLaTeX),
+  `# #+LATEX_HEADER: \usepackage[style=plain]{biblatex}`.
+- If `_:nil` / `^:nil` (isotope files), org will **not** turn `T_{1/2}` into a subscript.
+  Write `$T_{1/2}$` / `$E_{\gamma}$` when those headers must be math; otherwise keep `_:nil` and `\null^{…}`.
+
 ## 7. Verification checklist (before calling a file done)
 
 - No `$^{` anywhere: search for `$^{`.
 - No `$\approx$`: search for `$` around `\approx`.
+- No `$\mu$` in units; micrometre is `\nbsp{}\mu{}m`.
+- Non-breaking spaces in units/energy: `\nbsp{}`, not org `~`.
 - Every isotope cell/prose mention matches `\null^{...}Xy`.
 - No bare `^` anywhere except `\null^{...}` isotope marks: search for `^`.
 - `<r>` cookie row present under each table header.

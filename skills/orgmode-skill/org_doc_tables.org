@@ -1,0 +1,160 @@
+#+TITLE: Sluzebni cesta TAS
+#+OPTIONS: title:nil
+#+OPTIONS: toc:nil
+#+OPTIONS: ^:nil
+#+OPTIONS: _:nil
+#+LATEX_COMPILER: lualatex
+#+LaTeX_HEADER: \usepackage{minted} \usepackage{bookmark} \usepackage{xcolor}
+#+LATEX_HEADER: \makeatletter \@ifpackageloaded{geometry}{\geometry{margin=2cm}}{\usepackage[margin=2cm]{geometry}} \makeatother
+#+LaTeX_HEADER: \usemintedstyle{xcode}
+#+LATEX_HEADER: \definecolor{verywhite}{rgb}{0.9, 0.9, 0.9}
+#+LATEX_HEADER: \usepackage{siunitx}
+
+\hfill vytvořeno : \today
+
+# * Cesta
+
+# Nazev akce: TAS
+
+# Termin:
+# - od <2026-07-14 Tue>
+# - do <2026-07-20 Tue>
+
+# Myto 14.7. tam: 4.8 4.6 2.4
+# Myto 20.7. zpet: 5.6, 2.0, 9.7, 17 4.8
+
+# Diesel tam 14.7:  487.5 CZK 88.11 EUR
+# Diesel zpet 20.7.: 103.3 EUR, 1383 CZK
+
+#+NAME: startblock
+#+BEGIN_SRC emacs-lisp :exports none
+(setq org-confirm-babel-evaluate nil)  ;;; DANGEROUS AUTORUN
+#+END_SRC
+
+#+RESULTS: startblock
+
+* Kurzy ČNB
+
+https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt
+
+#+NAME: calc-kurz
+#+header: :eval yes
+#+begin_src python :var date="<2026-07-21 Tue>" :results output :exports none
+import requests
+
+def get_cnb_rate(date="20.07.2026"):
+    dd = date.strip()
+    if dd[0] == "<":
+        dd = dd.strip(">").strip("<").split(" ")[0]
+        qd = dd.split("-")
+        dd = f"{qd[2]}.{qd[1]}.{qd[0]}"
+
+    url = f"https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt?date={dd}"
+    response = requests.get(url)
+    response.raise_for_status()
+
+    lines = response.text.splitlines()
+    if not lines:
+        return 0
+
+    # CNB returns the effective date in the first line, e.g. "16.07.2026 #135".
+    returned_date = lines[0].split(" ")[0].strip()
+    if returned_date != dd:
+        return 0
+
+    for line in lines:
+        if "EMU|euro" in line:
+            parts = line.split('|')
+            rate_str = parts[-1].replace(',', '.')
+            return float(rate_str)
+    return 0
+
+print(get_cnb_rate(date))
+#+end_src
+
+#+RESULTS: calc-kurz
+: 24.17
+
+* Doprava
+
+** Mýto EUR
+
+#+ATTR_LATEX: :options {0.5\textwidth}
+#+begin_minipage
+#+NAME: mytotam
+#+ATTR_LATEX: :placement [H] :align S
+#+CAPTION: Mytne tam EUR
+|  4.8 |
+|  4.6 |
+|  2.4 |
+| 28.8 |
+|------|
+| 40.6 |
+#+TBLFM: @>$1=vsum(@1..@-1)
+#+end_minipage
+#+ATTR_LATEX: :options {0.5\textwidth}
+#+begin_minipage
+#+NAME: mytozpet
+#+ATTR_LATEX: :placement [H] :align S
+#+CAPTION: Mytne zpet EUR
+|  5.6 |
+|  2.0 |
+|  9.7 |
+|   17 |
+|  4.8 |
+|------|
+| 39.1 |
+#+TBLFM: @>$1=vsum(@1..@-1)
+#+end_minipage
+
+#+NAME: mytocelkem
+#+ATTR_LATEX: :placement [H] :align l S S S
+#+CAPTION: Mytne prevedene do CZK
+| datum            |   kurz | Mýto EUR |     CZK |
+|------------------+--------+----------+---------|
+| <2026-07-14 Tue> | 24.285 |     40.6 |  985.97 |
+| <2026-07-20 Mon> | 24.195 |     39.1 |  946.02 |
+|------------------+--------+----------+---------|
+|                  |        |          | 1931.99 |
+#+TBLFM: @2$2..@3$2='(org-sbe calc-kurz (date $$1))::@2$3=remote(mytotam,@>$1)::@3$3=remote(mytozpet,@>$1)::@2$4..@3$4=$2*$3;%.2f::@>$4=vsum(@2..@-1);%.2f
+
+** Diesel
+
+#+ATTR_LATEX: :options {0.5\textwidth}
+#+begin_minipage
+#+NAME: dieseleur
+#+ATTR_LATEX: :placement [H] :align l S S S
+#+CAPTION: Nafta zahranici
+| datum            |   kurz | cena EUR |     CZK |
+|------------------+--------+----------+---------|
+| <2026-07-14 Tue> | 24.285 |    88.11 | 2139.75 |
+| <2026-07-20 Mon> | 24.195 |    103.3 | 2499.34 |
+|------------------+--------+----------+---------|
+|                  |        |   191.41 | 4639.09 |
+#+TBLFM: @2$2..@3$2='(org-sbe calc-kurz (date $$1))::@2$4..@3$4=$2*$3;%.2f::@>$3=vsum(@2..@-1);%.2f::@>$4=vsum(@2..@-1);%.2f
+#+end_minipage
+#+ATTR_LATEX: :options {0.5\textwidth}
+#+begin_minipage
+#+NAME: dieselczk
+#+ATTR_LATEX: :placement [H] :align S
+#+CAPTION: Nafta CZ
+|   487.5 |
+|  1383.0 |
+|---------|
+| 1870.50 |
+#+TBLFM: @>$1=vsum(@1..@-1);%.2f
+#+end_minipage
+
+* Souhrn
+
+#+NAME: total
+#+ATTR_LATEX: :placement [H] :align l S
+#+CAPTION: Celkový součet v CZK
+| cast            |     CZK |
+|-----------------+---------|
+| mýto            | 1931.99 |
+| nafta zahraničí | 4639.09 |
+| nafta CZ        |  1870.5 |
+|-----------------+---------|
+| celkem          | 8441.58 |
+#+TBLFM: @2$2=remote(mytocelkem,@>$>)::@3$2=remote(dieseleur,@>$>)::@4$2=remote(dieselczk,@>$>)::@>$2=vsum(@2..@-1);%.2f

@@ -40,7 +40,7 @@ For full compatibility (avoids missing-package issues):
 sudo apt-get install -y texlive-full
 ```
 
-Pygments (org-mode minted / code-block export) is still installed with `uv tool install Pygments` — see `SKILL.md`.
+Pygments (org-mode minted / code-block export): `uv tool install Pygments` or `apt install python3-pygments`. PDF needs `--shell-escape`. Per-language colours (`bash` / `python` / `asc`) live in `template_literate.org`; habits: `SKILL_org_doc_literate.md`. Joint entry: `SKILL.md`.
 
 ## TRAMP: edit the VM repo from host Emacs
 

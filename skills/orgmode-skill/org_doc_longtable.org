@@ -1,0 +1,55 @@
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+#+OPTIONS: tex:dvipng
+# #+LATEX_HEADER: \usepackage{utf8}
+# #+LATEX_HEADER: \usepackage[style=plain]{biblatex}
+
+#+LATEX_CLASS_OPTIONS: [a4paper,12pt]
+#+LATEX_HEADER: \usepackage{parskip} \usepackage[margin=2cm]{geometry} \usepackage{booktabs,dcolumn}
+#+LATEX_HEADER: \newcolumntype{d}[1]{D{.}{.}{#1}}%
+
+* Some Latex stuff
+
+Tricks to put correct latex :
+ - ~ tilde AS A non-breaking space in Latex may be simulated by: At 40\nbsp{}MeV
+ - micrometer - greek symbol - may be simulated as:  thickness 25\nbsp{}\mu{}m
+   - NOT WITH the dolar sign -  25 $\mu$m
+   - NOT just separated mu and m - 26 \mu m
+ - upper-index with \null before: \null^{40}Ca ions
+
+
+** Examples
+*** non-break spaces and up-index
+At 40\nbsp{}MeV on thickness 25\nbsp{}\mu{}m we sent \null^{40}Ca ions \mu.
+
+
+*** tables
+  - using *longtable* works great for decimal
+  - other tables are more complex, see ~template_table~
+    - TABLES: colortbl, siunitx, tabularray... big thing, but I cannot do decimal alignment there
+  - see ATTR_LATEX alignment r,l, decimal places 7,3 or 5,3
+#+NAME: table1
+#+CAPTION: Table of gamma energies, intensities and halflives
+#+ATTR_LATEX: :environment longtable
+#+ATTR_LATEX: :placement [H!]
+#+ATTR_LATEX: :align r|l|d{7,3}|d{5,3}|c|c
+| Isotopes      | T_{1/2}   | E_{\gamma}[keV] | I_{\gamma} [%] |                    |     |
+|---------------+-----------+-----------------+----------------+--------------------+-----|
+| \null^{101}Tc | 14.22 min |          306.86 |             89 | *\footnotemark[1]  | S   |
+| \null^{99m}Tc | 6.01 h    |           140.5 |             89 | *\footnotemark[1]  | S   |
+| \null^{97m}Tc | 90.1 d    |            96.5 |           0.31 |                    | R   |
+| \null^{96}Tc  | 4.28 d    |         778.224 |            100 | *\footnotemark[1]  | L   |
+|               |           |         849.929 |             98 |                    |     |
+
+
+
+#+NAME: tblSideways
+#+CAPTION: A sidewaystable
+#+ATTR_LATEX: :font \footnotesize :float sidewaystable :placement [H]
+| Isotopes      | T_{1/2}   | E_{\gamma}[keV] | I_{\gamma} [%] |                    |     |
+|---------------+-----------+-----------------+----------------+--------------------+-----|
+| \null^{101}Tc | 14.22 min |          306.86 |             89 | *\footnotemark[1]  | S   |
+| \null^{99m}Tc | 6.01 h    |           140.5 |             89 | *\footnotemark[1]  | S   |
+| \null^{97m}Tc | 90.1 d    |            96.5 |           0.31 |                    | R   |
+| \null^{96}Tc  | 4.28 d    |         778.224 |            100 | *\footnotemark[1]  | L   |
+|               |           |         849.929 |             98 |                    |     |

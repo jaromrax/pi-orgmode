@@ -1,0 +1,336 @@
+#+OPTIONS: ^:t # # -------------- dont interpret ^_ as in math... or Allow index in title
+#+TITLE: Literate programming
+#+AUTHOR: Me, Emacs User
+#+STARTUP: nofold
+#  +STARTUP: hideblocks
+# __________________________________________________________________ BLOCK PROPERTIES
+#+PROPERTY: header-args:python :session *python_session* :results replace output :exports none :tangle yes :comments both :noweb yes :eval never-export
+#+PROPERTY: header-args:bash :session *bash_session* :results replace  output :exports results :eval never-export
+#+PROPERTY: header-args
+# __________________________________________________________________ USEPACKAGE
+#+LATEX_HEADER: \usepackage{booktabs,dcolumn}
+#+LATEX_HEADER: \newcolumntype{d}[1]{D{.}{.}{#1}}%
+#+LATEX_HEADER: \makeatletter \@ifpackageloaded{geometry}{\geometry{margin=2cm}}{\usepackage[margin=1.7cm]{geometry}} \makeatother
+# ------ same indent for all paragraph
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+# -----
+#+LATEX_HEADER: \usepackage{enumitem}
+# ---- not correct but spaces are slim now
+#+LATEX_HEADER: \setlist{itemsep=0pt, topsep=1pt}
+# ***********************************************************************************
+#+latex_header: \usepackage[utf8]{inputenc} %% For unicode chars
+#+LaTeX_HEADER: \usepackage{minted,bookmark}
+# ------------------------- for new-verbatim   and colors
+#+LaTeX_HEADER: \usepackage{framed,xcolor,verbatim}
+# --------- margins brutally ------
+#+LaTeX_HEADER: \usemintedstyle{autumn}
+# ====================== this forces  quote ENV ...  force itshape bf ===============
+#+LaTeX_HEADER: \usepackage{etoolbox}\AtBeginEnvironment{quote}{\itshape\bf}
+# __________________________________________________________________ COLORS and MINTED
+# =================== new verbatim environment --- EXAMPLE ; RESULTS
+#  ----- shadecolor is in verbatim=example;results !!!!
+#+LaTeX_HEADER: \definecolor{shadecolor}{rgb}{0.96, .96, .96}
+#  +LaTeX_HEADER: \definecolor{shadecolor}{rgb}{1., .98, .96} %nice orange
+#+LaTeX_HEADER: \definecolor{ascicolor}{rgb}{.97, 1., .9}
+#+LaTeX_HEADER: \definecolor{codecolor}{rgb}{.97, .97, .99}
+#+LaTeX_HEADER: \definecolor{shellcolor}{rgb}{.95, .97, .97}
+# ------ new verbatim is here -------------------
+#+LATEX_HEADER: \let\oldverbatim=\verbatim
+#+LATEX_HEADER: \let\oldendverbatim=\endverbatim
+#+LATEX_HEADER: \FrameSep=0.2em
+#+LATEX_HEADER: \OuterFrameSep=-0.5em
+#+LATEX_HEADER: \renewenvironment{verbatim}[1][test]
+#+LATEX_HEADER: {
+#+LATEX_HEADER:   \vskip 1em\framed\shaded\oldverbatim
+#+LATEX_HEADER: }
+#+LATEX_HEADER: {
+#+LATEX_HEADER:   \oldendverbatim\endshaded\endframed\vskip 1em
+#+LATEX_HEADER: }
+# __________________________________________________________________  BASH/PYTHON/ASC
+# ----------------------------- SHELL: file contents; autumn=italic; grayish
+#+latex_header: \setminted[bash]{style=autumn,bgcolor=shellcolor,breaklines,frame=topline}
+
+# ----------------------------- PYTHON: autumn= #italic; blue
+#  -- colorful,autumn(undrsc==perldoc),sas,igor,tango,MANNI,PASTIE
+#  ,not monokai,zenburn,paraiso-dark,fruity,inkpot,native,mnaterial,rrt
+#+latex_header: \setminted[python]{style=pastie,bgcolor=codecolor,frame=topline,framesep=2mm, breaklines}
+
+# ----------------------------- ASC: file contents; vim=not italic; ascicolor
+#+latex_header: \setminted[asc]{style=vim,bgcolor=ascicolor,breaklines,frame=lines,framesep=2mm}
+# .................... bgcolor=lime!10!white
+# _________________________________________________________________ indent+itemsep+placeins
+# ------ same indent for all paragraph ....functional..  \afterpage{\FloatBarrier} +ragged
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+# ----- intemize better # ---- not correct but spaces are slim now
+#+LATEX_HEADER: \usepackage{enumitem,placeins}
+#+LATEX_HEADER: \setlist{itemsep=0pt, topsep=1pt}
+#+LATEX_HEADER: \raggedbottom
+# _________________________________________________________________  OPTIONS
+#+OPTIONS: toc:nil  author:nil title:t date:t  num:nil author:t
+
+* Instructions
+
+** One header for all
+  - Prerequisites
+#+NAME: prereq
+#+begin_src bash :exports code
+apt install python3-pygments
+apt install python3-jupyter-client
+# ~pdflatex/[--shell-escape]~ and ~minted???~
+#+end_src
+   - EXPORTING and RUNNING code
+     - use: =:eval never-export= to export without evaluation
+     - use =:noweb= and =<<a1_section>>= to chain the code blocks
+     - use: =:exports none= and =code= when =:noweb= to avoid duplicite code exports
+       - the output with RESULTS is too busy and unclear, do it by hand
+     - use predefined blocks  =asc=  =python=  and =bash=
+   - TO SAVE PAPER SPACE
+
+#+begin_src asc
+ - OPTIONS: title:nil date:nil author:nil
+#+end_src
+
+\vspace{ -6mm}
+** Keep  clean the organization
+     - use only ONE MAIN FILE, include the others, headless
+     - the current folder let remain messy with temporary files, but
+     - the exported image files let be in ~./images/~
+     - and dont bother to export results, they can be messy too
+     - use =#+NAME:= everywhere
+
+** Keep clean coding rules
+     - use global =HEADER :var= to define variables for all =:noweb=
+     - double check variables with =C-c C-c= and print variables with print block
+     - start the very 1st block with src_python[:exports code :results raw]{print(f"** STARTED ** dt.datetime(now) ****")}
+     - end every block with  src_python[:exports code :results raw]{print(f"i... a1 ... ended")}
+     - open the *python output* buffer to see the debug and results
+     - kill this buffer to restart python again
+
+
+**  Tricks in exporting to PDF
+    - Example_Blocks =cannot= start with blankLINE!
+    - saving png histograms made problems, use jpg
+
+* Code examples
+
+Here maintain global variables, verify and even let them in the results and export. The results export uses =verbatim= as the =example= block
+
+# -------------- GLOBAL VARIABLES ---- MAKE THEM ACTIVE BY C-c 2x  + verify ---
+#+PROPERTY: header-args :var runnum=141
+#+begin_src python :exports results
+print(" ************** GLOBAL CONSTANTS ************") # RUN C-c C-c  here
+print("i...   RUNNUMBER: ", runnum)
+#+end_src
+
+#+RESULTS:
+:  ************** GLOBAL CONSTANTS ************
+: i...   RUNNUMBER:  141
+
+*** All variables defined after this point
+
+Supposedly, the emacs is running in the environment like ~cd ~/.venv; uv venv emacs;source emacs/bin/activate~
+
+#+NAME: a1_definitions
+#+begin_src python
+import datetime as dt
+print(f"*********** START_______{runnum}_________________________",dt.datetime.now())
+import numpy as np
+from iminuit import Minuit
+import pandas as pd
+import matplotlib
+matplotlib.use("Qt5Agg")
+import matplotlib.pyplot as plt
+import ROOT
+ROOT.gStyle.SetOptStat(1111111)
+ROOT.gStyle.SetPadGridX(True)
+ROOT.gStyle.SetPadGridY(True)
+from jusflpyroot import NumpyTH1
+NumpyTH1.reset_all() # every time start from scratch
+print(f"i... a1 ...  done ")
+#+end_src
+
+#+RESULTS: a1_definitions
+: _START_______141_________________________ 2025-07-18 12:59:26.186592
+: D... deleted all instances
+: D... reset colors
+: i... a1 ...  done
+
+#+NAME: TAB
+| a | b | c |  d |  e | f |
+|---+---+---+----+----+---|
+| 1 | 2 | 3 |  4 |  5 | 6 |
+| 7 | 8 | 9 | 10 | 11 | 12 |
+
+#+NAME:a2_functions
+#+HEADER: :var tab=TAB
+#+begin_src python
+<<a1_definitions>>
+def fu(r):
+    print(f"RUN={r}")
+print("The content of tab=",tab, ";\n     tab[0]==row2==", tab[0])
+print(f"i... a2 ...  done ")
+#+end_src
+
+#+RESULTS: a2_functions
+: _START_______141_________________________ 2025-07-18 13:05:43.686820
+: D... deleted all instances
+: D... reset colors
+: i... a1 ...  done
+: The content of tab= [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]] ; tab[0]==row2== [1, 2, 3, 4, 5, 6]
+: i... a2 ...  done
+
+This is the only block you need to run. And the only one to export
+
+#+NAME: a3_run
+#+HEADER: :exports both
+#+begin_src python
+<<a2_functions>>
+fu(runnum)
+print(f"i... a3 ...  done ")
+#+end_src
+
+#+RESULTS: a3_run
+: *********** START_______141_________________________ 2025-07-18 13:46:17.643596
+: D... deleted all instances
+: D... reset colors
+: i... a1 ...  done
+: The content of tab= [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]] ;
+:      tab[0]==row2== [1, 2, 3, 4, 5, 6]
+: i... a2 ...  done
+: RUN=141
+: i... a3 ...  done
+
+*** Some root trick
+
+To be checked more:
+#+begin_src python
+import time
+import threading
+
+canvas=ROOT.TCanvas("a")
+def run_root_loop(canvas):
+    while not canvas.IsZombie():
+        ROOT.gSystem.ProcessEvents()
+        time.sleep(0.05)
+def show_canvas(): # Use to let ROOT show the Draw
+    thread = threading.Thread(target=run_root_loop, args=(canvas,), daemon=True)
+    thread.start()
+# -------------------------------------------------
+h=ROOT.TH2F("h","h",100,0,100,100,0,100)
+canvas.Draw()
+h.Draw()
+show_canvas()
+#+end_src
+
+*** Some CALL function trick - block
+
+The python code named ~hi~ has no =:results=
+
+#+NAME: hi
+#+begin_src python :results none :exports code
+print("hello")
+#+end_src
+
+In the text, I put =#CALL:hi()= to the line start and =C-c C-c=
+#+CALL:hi() :exports results
+
+#+RESULTS:
+: hello
+
+And it exports the RESULTS block. May not be so nice, but we get an output from within a text.
+
+*** Another python call trick - inline
+
+The inline call that seamlesly contributes to the text: src_python[:exports both :results raw]{import datetime as dt}
+
+Especially nice for export is this:
+src_python[:exports results :results  replace output]{print(dt.datetime.now())} {{{results(=2025-07-18 13:13:51.438274=)}}}
+
+
+*** Links and tricks
+ - https://orgmode.org/manual/Working-with-Source-Code.html
+ - See results of evaluation  - https://orgmode.org/manual/Results-of-Evaluation.html
+
+**** Using HEADERS:
+ - Org can extract one or more source code blocks and write them to one or more source files—a process known as tangling in literate programming terminology (:tangle yes).
+ - it has the ability to pass variables, functions, and results to one another (:noweb yes)
+
+Defaults:
+ - :session    => "none"  \quad /buffer for debug/
+ - :results    => "replace" \quad  /replace output... try also file raw drawer/
+   - /drawer/ makes a kind of drawer...
+   - /replace file output/ prepares image display if the only print is imagename
+   - you may need ~M-x iimage-mode~, maybe not
+ - :exports    => "code"\quad  /both code results/
+ - :cache      => "no" \quad  /not tested, better avoid/
+ - :noweb      => "no" \quad  ~/allow using <<name>> to call prev block/~
+ - :hlines     => "no" \quad  / /
+ - :tangle     => "no" \quad  /save code to file, all to same file; try FILENAME/
+ - :comments   => "yes" \quad /insert comments to tanglefile, lot of info/
+
+**** Long tables
+#+NAME: widetbltest
+#+CAPTION: Population and stuff. Longtable is used to align decimals
+#+ATTR_LATEX: :environment longtable
+#+ATTR_LATEX: :placement [H!]
+#+ATTR_LATEX: :align l|d{7,4}|d{21,3}
+| State       | \rm black | \rm shootings \enspace  per \enspace   100,000 |
+|-------------+------------+-----------------------------|
+| Mississippi |      38.69 |                        0.44 |
+| Louisiana   |      33.95 |                        0.69 |
+| Mnisek      |     1.1234 |                           0 |
+
+Other tables:
+ - longtable ... is ok even for decimal *OK*
+ - tabularray (siunitx) ... /big thing, but I cannot do decimal alignment/
+ - colortbl ... /difficult decimals from org/
+
+* Other block types to export
+
+=BASH block= - it can be also executed.
+
+#+NAME: prepare_venv
+#+begin_src bash :exports code
+mkdir -p ~/.venv
+cd ~/.venv
+uv venv emacs
+uv pip install pandas
+uv pip install matplotlib
+uv pip install requests
+#+end_src
+
+*REMOVE EVALUATION yes-no question ... carefully!!!!!!*
+#+begin_src elisp :exports code
+(setq org-confirm-babel-evaluate nil)
+#+end_src
+
+
+=ASC block= - terminal screen - ascicolor - overriding numers with =ATTR_LATEX:=
+#+ATTR_LATEX: :options numbers=both
+#+BEGIN_SRC asc
+009 03:02:48 0.80 MB 0:      [    ] 1: 0.21 [    ]    2.2% /1
+009 03:02:49 0.93 MB 0:      [    ] 1: 0.24 [    ]    2.5% /1
+009 03:02:50 0.89 MB 0:      [    ] 1: 0.23 [    ]    2.2% /1
+#+END_SRC
+
+=Example block= (no attr) - verbatim - shadecolor by definition
+#+BEGIN_EXAMPLE
+Connected to CAEN Digitizer Model DT5780M, recognized as board 0
+ROC FPGA Release is 04.08 - Build FA29
+AMC FPGA Release is 128.32 - Build F925 (fw)
+#+END_EXAMPLE
+
+** Useful keyboard  tricks:
+ - use =C-c C-c= to run the code
+ - use =C-c '= to edit the source AND
+   - the same to quit the edit
+ - use =c-c c-v c-b= to run all sources in the *full* document
+ - use =C-c C-v t= to *tangle* all/ *full* doc to a file like .py
+   - it seems the output file is the same as org filename
+   - ~org-babel-tangle~: for output file to disk, executable
+
+* Included texts
+** File1
+# +INCLUDE: file1.org
+** File2
+# +INCLUDE: file2.org
